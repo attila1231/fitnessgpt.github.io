@@ -13,17 +13,43 @@
       font-weight: normal;
       font-style: normal;
         letter-spacing: 0.01em;
-      background: linear-gradient(to right, #222222   , #2d2d2d);
       margin: 0;
       padding: 0;
       display: flex;
       flex-direction: column;
       height: 100vh;
       color: white;
+    position: relative;
+      overflow: hidden; /* keep pseudo-elements from causing scrollbars */
+      background: #111; /* fallback */
+    }
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: url('bg.png') center/cover no-repeat;
+  filter: blur(6px);
+  transform: scale(1.05); /* avoid edge clipping from blur */
+  z-index: 0;
+}
+
+/* Layer 2: glass overlay */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(6px) saturate(160%);
+  -webkit-backdrop-filter: blur(6px) saturate(160%);
+  pointer-events: none;
+  z-index: 1;
+}
+#chatbox, #inputbar, #typing-indicator, .msg, .user, .bot, #greeting {
+      position: relative;
+      z-index: 2;
     }
 
     #chatbox {
-    
       flex-grow: 1;
       overflow-y: auto;
       padding: 20px;
@@ -33,35 +59,30 @@
     }
 
     .msg {
-        
       max-width: 70%;
       padding: 12px 16px;
       border-radius: 18px;
       line-height: 1.4;
       word-wrap: break-word;
-      animation: blurFadeIn 0.4s ease forwards;
+      animation: blurFadeIn_greeting 0.4s ease forwards;
     }
 
     .user {
       align-self: flex-end;
       background: linear-gradient(to right, #8807eb, #0649e6);
-      color: rgb(255, 255, 255);
+      color: #fff;
     }
-
 
     .bot {
       align-self: flex-start;
-      
-      color: white;
+      color: rgb(255, 255, 255);
+      filter: drop-shadow(1.5px 1.5px 2px #111);
     }
 
-    .gradient {
-      
-      
-    }
+    .gradient { }
 
     #inputbar {
-      margin:  auto;
+      margin: auto;
       margin-bottom: 30px;
       padding: 15px;
       text-align: center;
@@ -69,10 +90,14 @@
       width: 70%;
       min-width: 350px;
       max-width: 900px;
-      border: rgba(255, 255, 255, 0.599), 1px solid;
-      border-radius: 6px;
+      border: rgba(255, 255, 255,0.75), 1px solid;
+      border-radius: 20px;
+      animation: slidein 0.6s ease-in-out;
     }
-    
+    #inputbar:focus-within {
+  border-color: rgba(255, 255, 255, 1); /* full opacity when input focused */
+}
+
 
     #input {
       font-family: 'Roboto', sans-serif;
@@ -82,19 +107,15 @@
       border: none;
       border-radius: 10px;
       margin-right: 10px;
-      background: #222;
+      background: #313131;
       color: white;
       outline: none;
       transition: box-shadow 0.2s;
     }
-    #input:focus {
-      box-shadow: 0 0 0 2px #0649e6;
-    }
 
-    
 
     #send {
-        font-family: 'Roboto', sans-serif;
+      font-family: 'Roboto', sans-serif;
       padding: 12px 18px;
       font-size: 16px;
       background: linear-gradient(to right, #8807eb, #0649e6);
@@ -102,55 +123,57 @@
       border-radius: 10px;
       cursor: pointer;
       font-weight: bold;
-      color: #ffffff;
+      color: #fff;
     }
-    #send:hover {
-      background: linear-gradient(to right, #6906b4, #0538b0);
-    }
-    #typing-indicator {
-  font-style: italic;
-  color: #aaa;
-  margin: 10px 0;
-  animation: fadeIn 0.3s ease;
-}
-#greeting{
- letter-spacing: 0.05em;
-  margin: auto;
-  padding: 10px;
-  text-align: center;
-  font-size:32px;
-  background: -webkit-linear-gradient(right,#eb07e4, #06aae6);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-weight: bold;
-  animation: blurFadeIn 0.5s ease-in-out;
-  opacity: 1;
+    #send:hover { background: linear-gradient(to right, #6906b4, #0538b0); }
 
-}
+    #typing-indicator {
+      font-style: italic;
+      color: #aaa;
+      margin: 10px 0;
+      animation: fadeIn 0.3s ease;
+    }
+
+    #greeting{
+    letter-spacing: 0.01em;
+      margin: auto;
+      padding: 10px;
+      text-align: center;
+      font-size:32px;
+      background: -webkit-linear-gradient(right,#ff09f7, #06bdff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: bold;
+      animation: blurFadeIn_greeting 0.6s ease-in-out;
+      opacity: 1;
+       filter: drop-shadow(1.5px 1.5px 2px #111);
+    }
 
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(10px); }
       to { opacity: 1; transform: translateY(0); }
     }
     @keyframes blurFadeIn {
-  0% {
-    filter: blur(6px);
-    opacity: 0;
-  }
-  100% {
-    filter: blur(0);
-    opacity: 1;
-  }
-}
+      0% { filter: blur(6px); opacity: 0; }
+      100% { filter: blur(0); opacity: 1; }
+    }
+    @keyframes blurFadeIn_greeting {
+      0% { filter: blur(6px); opacity: 0; filter: drop-shadow(1px 1px 2px #11111100); }
+      100% { filter: blur(0); opacity: 1; filter: drop-shadow(1.5px 1.5px 2px #111);}
+    }
+    @keyframes slidein {
+      from { transform: translateY(100%); opacity: 0;}
+      to { transform: translateY(0); opacity: 1; }
+    }
   </style>
 </head>
 <body>
   <div id="chatbox">
     <div id="greeting">Welcome to FitnessGPT :)</div>
   </div>
-  <div id="typing-indicator" style="display: none;">FitnessGPT is thinking...</div>
+  <div id="typing-indicator" style="display: none;">FitnessGPT is thinking</div>
   <div id="inputbar">
-    <input id="input" placeholder="Ask FitnessGPT anything..." />
+    <input id="input" placeholder="Ask FitnessGPT anything" />
     <button id="send" onclick="sendMessage()">Send</button>
   </div>
   
