@@ -1,315 +1,197 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
   <meta charset="UTF-8" />
   <title>FitnessGPT</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
   <link rel="icon" type="image/x-icon" href="fitnessgpt.png">
-  <style>
-    body {
-      font-family: 'Roboto', sans-serif;
-      font-weight: normal;
-      font-style: normal;
-        letter-spacing: 0.01em;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      color: white;
-    position: relative;
-      overflow: hidden; /* keep pseudo-elements from causing scrollbars */
-      background: #111; /* fallback */
-    }
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background: url('bg.png') center/cover no-repeat;
-  filter: blur(6px);
-  transform: scale(1.05); /* avoid edge clipping from blur */
-  z-index: 0;
-}
-
-/* Layer 2: glass overlay */
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  background: rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(6px) saturate(160%);
-  -webkit-backdrop-filter: blur(6px) saturate(160%);
-  pointer-events: none;
-  z-index: 1;
-}
-#chatbox, #inputbar, #typing-indicator, .msg, .user, .bot, #greeting {
-      position: relative;
-      z-index: 2;
-    }
-
-    #chatbox {
-      flex-grow: 1;
-      overflow-y: auto;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .msg {
-      max-width: 70%;
-      padding: 12px 16px;
-      border-radius: 18px;
-      line-height: 1.4;
-      word-wrap: break-word;
-      animation: blurFadeIn_greeting 0.4s ease forwards;
-    }
-
-    .user {
-      align-self: flex-end;
-      background: linear-gradient(to right, #8807eb, #0649e6);
-      color: #fff;
-    }
-
-    .bot {
-      align-self: flex-start;
-      color: rgb(255, 255, 255);
-      filter: drop-shadow(1.5px 1.5px 2px #111);
-    }
-
-    .gradient { }
-
-    #inputbar {
-      margin: auto;
-      margin-bottom: 30px;
-      padding: 15px;
-      text-align: center;
-      display: flex;
-      width: 70%;
-      min-width: 350px;
-      max-width: 900px;
-      border: rgba(255, 255, 255,0.75), 1px solid;
-      border-radius: 20px;
-      animation: slidein 0.6s ease-in-out;
-    }
-    #inputbar:focus-within {
-  border-color: rgba(255, 255, 255, 1); /* full opacity when input focused */
-}
-
-
-    #input {
-      font-family: 'Roboto', sans-serif;
-      flex: 1;
-      padding: 12px;
-      font-size: 16px;
-      border: none;
-      border-radius: 10px;
-      margin-right: 10px;
-      background: #313131;
-      color: white;
-      outline: none;
-      transition: box-shadow 0.2s;
-    }
-
-
-    #send {
-      font-family: 'Roboto', sans-serif;
-      padding: 12px 18px;
-      font-size: 16px;
-      background: linear-gradient(to right, #8807eb, #0649e6);
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      font-weight: bold;
-      color: #fff;
-    }
-    #send:hover { background: linear-gradient(to right, #6906b4, #0538b0); }
-
-    #typing-indicator {
-      font-style: italic;
-      color: #aaa;
-      margin: 10px 0;
-      animation: fadeIn 0.3s ease;
-    }
-
-    #greeting{
-    letter-spacing: 0.05em;
-      margin: auto;
-      padding: 10px;
-      text-align: center;
-      font-size:32px;
-      background: -webkit-linear-gradient(right,#ff09f7, #06bdff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      font-weight: bold;
-      animation: blurFadeIn_greeting 0.6s ease-in-out;
-      opacity: 1;
-       filter: drop-shadow(1.5px 1.5px 2px #111);
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes blurFadeIn {
-      0% { filter: blur(6px); opacity: 0; }
-      100% { filter: blur(0); opacity: 1; }
-    }
-    @keyframes blurFadeIn_greeting {
-      0% { filter: blur(6px); opacity: 0; filter: drop-shadow(1px 1px 2px #11111100); }
-      100% { filter: blur(0); opacity: 1; filter: drop-shadow(1.5px 1.5px 2px #111);}
-    }
-    @keyframes slidein {
-      from { transform: translateY(100%); opacity: 0;}
-      to { transform: translateY(0); opacity: 1; }
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="chatbox">
-    <div id="greeting">Welcome to FitnessGPT :)</div>
+  <div class="app">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="logo">FitnessGPT</div>
+      <button class="mode-btn active" data-mode="chat">💬 <span>Chat</span></button>
+      <button class="mode-btn" data-mode="meal">🍽️ <span>Meal Analyzer</span></button>
+      <button class="mode-btn" data-mode="physique">🏋️ <span>Physique Analyzer</span></button>
+      <button class="mode-btn" data-mode="profile">🤵 <span>Your profile</span></button>
+      <div class="hint">FitnessGPT can make mistakes.</div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+      <div class="topbar"><div class="title" id="title">Chat</div></div>
+
+      <!-- CHAT VIEW -->
+      <section id="chat-view" class="view active">
+        <div id="chatbox">
+          <div id="greeting">Welcome to FitnessGPT :)</div>
+        </div>
+        <div id="typing-indicator">FitnessGPT is thinking…</div>
+        <div id="inputbar">
+          <input id="input" placeholder="Ask FitnessGPT anything" />
+          <button id="send">Send</button>
+        </div>
+      </section>
+
+      <!-- MEAL ANALYZER -->
+      <section id="meal-view" class="view">
+        <div class="panel">
+          <div class="card" style="max-width:420px;">
+            <h3>Upload Meal Photo</h3>
+            <div class="preview" id="meal-preview">No image selected</div>
+            <div class="field">
+              <input type="file" id="meal-file" accept="image/*">
+            </div>
+            <div class="field">
+              <label>Goal</label>
+              <select id="meal-goal">
+                <option>balanced</option>
+                <option>fat loss</option>
+                <option>muscle gain</option>
+                <option>keto</option>
+              </select>
+            </div>
+            <div class="field">
+              <label>Allergies (comma-separated)</label>
+              <input id="meal-allergies" placeholder="e.g., peanuts, shellfish" />
+            </div>
+            <button class="btn" id="meal-analyze">Analyze Meal</button>
+            <div class="hint">We’ll estimate calories/macros and give a 0–10 health score.</div>
+          </div>
+
+          <div class="card">
+            <h3>Result</h3>
+            <div id="meal-score"></div>
+            <div id="meal-result" class="result">No result yet.</div>
+            <div id="meal-output">
+  <pre id="mealText"></pre>
+</div>
+          </div>
+             
+        </div>
+      </section>
+
+      <!-- PHYSIQUE ANALYZER -->
+      <section id="physique-view" class="view">
+        <div class="panel">
+          <div class="card" style="max-width:420px;">
+            <h3>Upload Physique Photo</h3>
+            <div class="preview" id="phys-preview">No image selected</div>
+            <div class="field">
+              <input type="file" id="phys-file" accept="image/*">
+            </div>
+            <div class="row">
+              <div class="field">
+                <label>Goal</label>
+                <select id="phys-goal">
+                  <option>recomposition</option>
+                  <option>fat loss</option>
+                  <option>muscle gain</option>
+                  <option>bodybuilding</option>
+                  <option>general fitness</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Sex</label>
+                <select id="phys-sex">
+                  <option>unspecified</option>
+                  <option>male</option>
+                  <option>female</option>
+                </select>
+              </div>
+            </div>
+            <div class="row">
+              <div class="field">
+                <label>Height (cm)</label>
+                <input type="number" id="phys-height" placeholder="e.g., 180">
+              </div>
+              <div class="field">
+                <label>Weight (kg)</label>
+                <input type="number" id="phys-weight" placeholder="e.g., 78">
+              </div>
+            </div>
+            <button class="btn" id="phys-analyze">Rate Physique</button>
+            <div class="hint">The photos are immediately deleted after being analyzed.</div>
+          </div>
+
+          <div class="card">
+            <h3>Result</h3>
+            <div id="phys-score"></div>
+            <div id="phys-result" class="result">No result yet.</div>
+          </div>
+        </div>
+      </section>
+      <!-- FITNESS PROFILE -->
+       <section id="profile-view" class="view">
+      <div id="profile-card" class="card">
+  <h3>Your Fitness Profile</h3>
+
+  <div class="grid">
+    <label>Age <input id="p-age" type="number" min="10" max="100" placeholder="28"></label>
+    <label>Sex
+      <select id="p-sex">
+        <option value="">—</option>
+        <option>male</option>
+        <option>female</option>
+        <option>other</option>
+      </select>
+    </label>
+
+    <label>Height (cm) <input id="p-height" type="number" min="100" max="250" placeholder="178"></label>
+    <label>Weight (kg)  <input id="p-weight" type="number" min="30"  max="250" step="0.1" placeholder="77.5"></label>
+
+    <label>Body Fat % <input id="p-bf" type="number" min="3" max="60" step="0.1" placeholder="18"></label>
+    <label>Activity
+      <select id="p-activity">
+        <option value="">—</option>
+        <option value="sedentary">Sedentary</option>
+        <option value="light">Light (1–3x/wk)</option>
+        <option value="moderate">Moderate (3–5x/wk)</option>
+        <option value="active">Active (6–7x/wk)</option>
+        <option value="athlete">Athlete (2x/day)</option>
+      </select>
+    </label>
+
+    <label>Goal
+      <select id="p-goal">
+        <option value="balanced">Balanced</option>
+        <option value="fat_loss">Fat loss</option>
+        <option value="muscle_gain">Muscle gain</option>
+        <option value="recomp">Recomposition</option>
+      </select>
+    </label>
+    <label>Diet (optional)
+      <select id="p-diet">
+        <option value="">—</option>
+        <option>high-protein</option>
+        <option>mediterranean</option>
+        <option>vegan</option>
+        <option>vegetarian</option>
+        <option>keto</option>
+        <option>paleo</option>
+      </select>
+    </label>
   </div>
-  <div id="typing-indicator" style="display: none;">FitnessGPT is thinking</div>
-  <div id="inputbar">
-    <input id="input" placeholder="Ask FitnessGPT anything" />
-    <button id="send" onclick="sendMessage()">Send</button>
+
+  <label>Allergies / avoid (comma-separated)
+    <input id="p-allergies" type="text" placeholder="nuts, dairy">
+  </label>
+
+  <div class="row">
+
   </div>
-  
-  <script>
-    const user_id = "user_" + Math.random().toString(36).substr(2, 9);
+<p ><strong>the changes are automatically being saved</strong></p>
+</div>
+</section>
+    </main>
+  </div>
 
-    const chatbox = document.getElementById("chatbox");
-    const input = document.getElementById("input");
-    input.addEventListener("keydown", function (event) {
-  if (event.key === "Enter" && !event.shiftKey) {
-    event.preventDefault(); // prevent newline
-    sendMessage();
-  }
-});
-
-    // On load: reset conversation and show greeting
-    window.onload = async () => {
-      await fetch("https://fitnessgpt-fdw9.onrender.com/reset", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ user_id })
-      });
-
-      const data = await res.json();
-      
-      typeMessage("FitnessGPT", data.reply, "bot gradient");
-    };
-
-    async function sendMessage() {
-  document.getElementById("greeting").style.display = "none";
-  const msg = input.value.trim();
-  if (!msg) return;
-
-  addMessage("You", msg, "user");
-  input.value = "";
-
-  // Show typing indicator
-  const typing = document.getElementById("typing-indicator");
-  typing.style.display = "block";
-
-  // ✅ Force DOM to update before continuing
-  await new Promise(requestAnimationFrame);
-
-  try {
-    const res = await fetch("https://fitnessgpt-fdw9.onrender.com/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ user_id, message: msg })
-    });
-    
-    const data = await res.json();
-
-    // Hide typing indicator
-    typing.style.display = "none";
-
-    // Show assistant message with animation
-    
-    typeMessage("FitnessGPT", data.reply, "bot gradient");
-  } catch (e) {
-    typing.style.display = "none";
-    addMessage("FitnessGPT", "Sorry, something went wrong.", "bot");
-  }
-}
-
-    function addMessage(sender, text, cls) {
-      const div = document.createElement("div");
-      div.className = `msg ${cls}`;
-      div.innerHTML = `<strong>${sender}</strong><br>${text}`;
-      chatbox.appendChild(div);
-      chatbox.scrollTop = chatbox.scrollHeight;
-    }
-
-    function typeMessage(sender, text, cls) {
-  const div = document.createElement("div");
-  div.className = `msg ${cls}`;
-  div.innerHTML = `<strong>${sender}</strong><br>`;
-
-  const span = document.createElement("span");
-  div.appendChild(span);
-  chatbox.appendChild(div);
-  chatbox.scrollTop = chatbox.scrollHeight;
-
-  let i = 0;
-
-  const interval = setInterval(() => {
-    const char = text.charAt(i++);
-
-    if (char === "\n") {
-      span.appendChild(document.createElement("br"));
-    } else {
-      span.appendChild(document.createTextNode(char));
-    }
-
-    chatbox.scrollTop = chatbox.scrollHeight;
-
-    if (i >= text.length) {
-      clearInterval(interval);
-      // Replace typed plain text with formatted HTML
-      span.innerHTML = chatgptOutputToHtml(text);
-    }
-  }, 8);
-}
-
-function chatgptOutputToHtml(text) {
-  let html = text
-    .replace(/&/g, "&amp;") // escape before parsing HTML
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
-
-  // Code blocks
-  html = html.replace(/```(\w+)?\n([\s\S]*?)```/g, (_, lang, code) => {
-    return `<pre><code>${code.trim()}</code></pre>`;
-  });
-
-  // Inline code
-  html = html.replace(/`([^`\n]+?)`/g, '<code>$1</code>');
-
-  // Bold-italic: ***text*** or ___text___
-  html = html.replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>');
-  html = html.replace(/___(.*?)___/g, '<strong><em>$1</em></strong>');
-
-  // Bold: **text** or __text__
-  html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-  html = html.replace(/__(.*?)__/g, '<strong>$1</strong>');
-
-  // Italic: *text* or _text_
-  html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
-  html = html.replace(/_(.*?)_/g, '<em>$1</em>');
-
-  // Line breaks
-  html = html.replace(/\n/g, '<br>');
-
-  return html;
-}
-
-
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
+
