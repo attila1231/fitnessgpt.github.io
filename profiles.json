@@ -1,0 +1,21 @@
+{
+  "u_2100645189-1450398599": {
+    "age": 21,
+    "sex": "male",
+    "height_cm": 177.0,
+    "weight_kg": 71.0,
+    "body_fat_pct": 16.0,
+    "activity": "active",
+    "goal": "balanced",
+    "diet": "high-protein"
+  },
+  "u_3044757134-807476434": {
+    "age": 16,
+    "sex": "male",
+    "height_cm": 177.0,
+    "weight_kg": 71.0,
+    "body_fat_pct": 16.0,
+    "activity": "active",
+    "goal": "muscle_gain"
+  }
+}
