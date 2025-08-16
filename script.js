@@ -1,5 +1,5 @@
  // ====== CONFIG ======
-    const API_BASE = "http://127.0.0.1:8000"; // change if needed
+    const API_BASE = "https://fitnessgpt-fdw9.onrender.com"; // change if needed
 
 
 
