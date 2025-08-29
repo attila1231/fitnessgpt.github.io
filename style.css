@@ -33,6 +33,7 @@
       background:-webkit-linear-gradient(right,#ff09f7,#06bdff);
       -webkit-background-clip:text; -webkit-text-fill-color: transparent;
       filter: drop-shadow(1.5px 1.5px 2px #111);
+      font-family: 'Montserrat', sans-serif;
 
     }
     .mode-btn{
