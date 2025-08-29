@@ -30,7 +30,7 @@
     }
     .logo{
       font-size:22px; font-weight:800; line-height:1; margin-bottom:12px;
-      background: linear-gradient(to right, BrandA, BrandB);
+      background: linear-gradient(to right, var(--brand-a), var(--brand-b));
       -webkit-background-clip:text; -webkit-text-fill-color: transparent;
       filter: drop-shadow(1.5px 1.5px 2px #111);
 
