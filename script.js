@@ -1,5 +1,5 @@
  // ====== CONFIG ======
-    const API_BASE = "https://fitnessgpt-fssu.onrender.com"; // change if needed
+    const API_BASE = "https://fitnessgpt-1.onrender.com"; // change if needed
 
 
 
